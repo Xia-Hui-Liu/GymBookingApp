@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace GymBookingApp.Models
 {
     public class ApplicationUserGymClass
     {
-        // Primary key for the ApplicationUserGymClass table
-        public int Id { get; set; }
-
+     
         // Foreign key for ApplicationUser
         public string? ApplicationUserId { get; set; }
         public ApplicationUser? ApplicationUser { get; set; }
@@ -21,7 +20,10 @@ namespace GymBookingApp.Models
     {
         public void Configure(EntityTypeBuilder<ApplicationUserGymClass> builder)
         {
-            // Configure the many-to-many relationship with ApplicationUser and GymClass
+            // Configure the relationship with ApplicationUser and GymClass
+
+            builder
+                .HasKey(k => new { k.ApplicationUserId, k.GymClassId });
             builder
                 .HasOne(agc => agc.ApplicationUser)
                 .WithMany(u => u!.GymClasses)

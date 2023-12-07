@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GymBookingApp.Data;
 using GymBookingApp.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GymBookingApp.Controllers
 {
@@ -14,9 +16,11 @@ namespace GymBookingApp.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public GymClassesController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) // inject UserManager<ApplicationUser> into GymClassesController
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: GymClasses
@@ -28,19 +32,17 @@ namespace GymBookingApp.Controllers
         // GET: GymClasses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return RedirectToAction(nameof(Index));
 
-            var gymClass = await _context.GymClasses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (gymClass == null)
-            {
-                return NotFound();
-            }
+            var gymClassWithAttendees = await _context.GymClasses
+                .Where(g => g.Id == id)
+                .Include(c => c.ApplicationUsers)
+                .ThenInclude(u => u.ApplicationUser).FirstOrDefaultAsync();
 
-            return View(gymClass);
+            if (gymClassWithAttendees == null)
+                return RedirectToAction(nameof(Index));
+
+            return View(gymClassWithAttendees);
         }
 
         // GET: GymClasses/Create
@@ -153,5 +155,35 @@ namespace GymBookingApp.Controllers
         {
             return _context.GymClasses.Any(e => e.Id == id);
         }
+
+        [Authorize]
+        public async Task<IActionResult> BookingToggle(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var userId = _userManager.GetUserId(User);
+
+            var attending = await _context.ApplicationUserGymClasses.FindAsync(userId, id);
+
+            if (attending == null)
+            {
+                var booking = new ApplicationUserGymClass
+                {
+                    ApplicationUserId = userId,
+                    GymClassId = (int)id
+                };
+                _context.ApplicationUserGymClasses.Add(booking);
+            }
+            else
+            {
+                _context.Remove(attending);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
+
 }

@@ -13,7 +13,7 @@ namespace GymBookingApp.Data
         }
 
         public DbSet<GymClass> GymClasses { get; set; }
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        //public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<ApplicationUserGymClass> ApplicationUserGymClasses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

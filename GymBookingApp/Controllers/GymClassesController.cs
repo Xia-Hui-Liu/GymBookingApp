@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GymBookingApp.Controllers
 {
+    
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -29,22 +30,29 @@ namespace GymBookingApp.Controllers
             return View(await _context.GymClasses.ToListAsync());
         }
 
+        [Authorize]
         // GET: GymClasses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return RedirectToAction(nameof(Index));
+            if (id == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
 
             var gymClassWithAttendees = await _context.GymClasses
-                .Where(g => g.Id == id)
-                .Include(c => c.ApplicationUsers)
-                .ThenInclude(u => u.ApplicationUser).FirstOrDefaultAsync();
+                    .Include(c => c.ApplicationUsers)
+                    .ThenInclude(u => u.ApplicationUser)
+                    .FirstOrDefaultAsync(g => g.Id == id);
 
             if (gymClassWithAttendees == null)
+            {
                 return RedirectToAction(nameof(Index));
+            }
 
             return View(gymClassWithAttendees);
         }
 
+        [Authorize]
         // GET: GymClasses/Create
         public IActionResult Create()
         {
@@ -67,6 +75,7 @@ namespace GymBookingApp.Controllers
             return View(gymClass);
         }
 
+        [Authorize]
         // GET: GymClasses/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -86,6 +95,7 @@ namespace GymBookingApp.Controllers
         // POST: GymClasses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,StartTime,Duration,Description")] GymClass gymClass)
@@ -118,6 +128,7 @@ namespace GymBookingApp.Controllers
             return View(gymClass);
         }
 
+        [Authorize]
         // GET: GymClasses/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -136,6 +147,7 @@ namespace GymBookingApp.Controllers
             return View(gymClass);
         }
 
+        [Authorize]
         // POST: GymClasses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -155,6 +167,7 @@ namespace GymBookingApp.Controllers
         {
             return _context.GymClasses.Any(e => e.Id == id);
         }
+
 
         [Authorize]
         public async Task<IActionResult> BookingToggle(int? id)

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymBookingApp.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

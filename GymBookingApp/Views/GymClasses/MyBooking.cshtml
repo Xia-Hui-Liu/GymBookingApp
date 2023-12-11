@@ -4,14 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
-@if (User.IsInRole("Admin"))
-{
-    <p>
-        <a asp-action="Create">Create pass</a>
-    </p>
-}
+<h1>My bookings</h1>
 
 <table class="table">
     <thead>
@@ -32,6 +25,6 @@
         </tr>
     </thead>
     <tbody>
-        <partial name="_GymClassesPartial" model="@Model.GymClasses" />
+        <partial name="_MyBookingPartial" model="@Model.GymClasses" />
     </tbody>
 </table>

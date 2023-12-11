@@ -18,6 +18,8 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAutoMapper(typeof(MapperProfile));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GymBookingApp.Data;
 using GymBookingApp.Models;
+using GymBookingApp.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace GymBookingApp.Controllers
 {
@@ -18,17 +20,26 @@ namespace GymBookingApp.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly UserManager<ApplicationUser> _userManager;
-        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager) // inject UserManager<ApplicationUser> into GymClassesController
+
+        private readonly IMapper _mapper;
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper) // inject UserManager<ApplicationUser> into GymClassesController
         {
             _context = context;
             _userManager = userManager;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
         // GET: GymClasses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GymClasses.ToListAsync());
+           var gymClasses = await _context.GymClasses
+                .Include(g => g.ApplicationUsers)
+                .Where(g => g.StartTime > DateTime.UtcNow)
+                .ToListAsync();
+
+            var model = _mapper.Map<IndexViewModel>(gymClasses);
+            return View(model);
         }
 
         
@@ -41,7 +52,7 @@ namespace GymBookingApp.Controllers
                 .Where(g => g.Id == id)
                 .Include(c => c.ApplicationUsers)
                 .ThenInclude(u => u.ApplicationUser).FirstOrDefaultAsync();
-        
+
             if (gymClassWithAttendees == null)
                 return RedirectToAction(nameof(Index));
 
@@ -192,6 +203,52 @@ namespace GymBookingApp.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> History()
+        {
+            var gymClasses = await _context.GymClasses
+                .Include(g => g.ApplicationUsers)
+                .Where(g => g.StartTime < DateTime.Now)
+                .ToListAsync();
+
+            var model = _mapper.Map<IndexViewModel>(gymClasses);
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> MyHistory()
+        {
+            var userId = _userManager.GetUserId(User);
+
+            var historicalClasses = await _context.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.GymClasses!)
+                .Select(ac => ac.GymClass)
+                .Where(g => g.StartTime < DateTime.Now)
+                .ToListAsync();
+
+            var model = _mapper.Map<IndexViewModel>(historicalClasses);
+
+            return View(model);
+        }
+        public async Task<IActionResult> MyBookings()
+        {
+
+            var userId = _userManager.GetUserId(User);
+
+            var bookedClasses = await _context.Users
+                .Where(u => u.Id == userId)
+                .SelectMany(u => u.GymClasses!)
+                .Select(ac => ac.GymClass)
+                .Where(g => g.StartTime > DateTime.Now)
+                .ToListAsync();
+
+            var model = _mapper.Map<IndexViewModel>(bookedClasses);
+
+            return View(model);
+        }
+
     }
 
 }

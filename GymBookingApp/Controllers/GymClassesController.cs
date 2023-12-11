@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GymBookingApp.Controllers
 {
-    
+    [Authorize]
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -24,30 +24,26 @@ namespace GymBookingApp.Controllers
             _userManager = userManager;
         }
 
+        [AllowAnonymous]
         // GET: GymClasses
         public async Task<IActionResult> Index()
         {
             return View(await _context.GymClasses.ToListAsync());
         }
 
-        [Authorize]
+        
         // GET: GymClasses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            if (id == null) return RedirectToAction(nameof(Index));
 
             var gymClassWithAttendees = await _context.GymClasses
-                    .Include(c => c.ApplicationUsers)
-                    .ThenInclude(u => u.ApplicationUser)
-                    .FirstOrDefaultAsync(g => g.Id == id);
-
+                .Where(g => g.Id == id)
+                .Include(c => c.ApplicationUsers)
+                .ThenInclude(u => u.ApplicationUser).FirstOrDefaultAsync();
+        
             if (gymClassWithAttendees == null)
-            {
                 return RedirectToAction(nameof(Index));
-            }
 
             return View(gymClassWithAttendees);
         }
@@ -169,7 +165,6 @@ namespace GymBookingApp.Controllers
         }
 
 
-        [Authorize]
         public async Task<IActionResult> BookingToggle(int? id)
         {
             if (id == null)

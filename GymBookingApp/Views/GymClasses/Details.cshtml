@@ -36,14 +36,13 @@
         </dd>
         <dd class="col-sm-10">
             <h5>Attending members: </h5>
-            @foreach(var attendee in Model.ApplicationUsers)
+            @foreach (var attendee in Model.ApplicationUsers)
             {
-                <div class="row">@attendee.ApplicationUser.UserName</div>
+                <div class="row">@attendee.ApplicationUser.FullName</div>
             }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

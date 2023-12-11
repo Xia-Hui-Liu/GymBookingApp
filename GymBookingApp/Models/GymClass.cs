@@ -11,11 +11,11 @@ namespace GymBookingApp.Models
         public string? Name { get; set; }
         public DateTime StartTime { get; set; }
         public TimeSpan Duration { get; set; }
-        public DateTime EndTime => StartTime + Duration;
+        public DateTime EndTime { get { return StartTime + Duration; } }
         public string? Description { get; set; }
 
         // Navigation property
-        public ICollection<ApplicationUserGymClass>? ApplicationUsers { get; set; }
+        public ICollection<ApplicationUserGymClass>? ApplicationUsers { get; set; } = new List<ApplicationUserGymClass>();
     }
 
 

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GymBookingApp.Models;
 using GymBookingApp.Models.ViewModels;
 using GymBookingApp.Repositories;
 using static GymBookingApp.Services.GymClassService;
@@ -22,24 +23,18 @@ namespace GymBookingApp.Services
         {
             var gymClasses = await _gymClassRepository.GetAllAsync();
 
-            // Map the list of GymClass entities directly to GymClassesViewModel
+            // Map the list of GymClass entities directly to IndexViewModel
             var dtos = _mapper.Map<IndexViewModel>(gymClasses);
-
-            // Wrap each GymClassesViewModel in an IndexViewModel
-            //var indexViewModels = dtos.Select(dto => new IndexViewModel { GymClasses = new List<GymClassesViewModel> { dto } });
 
             return dtos;
         }
 
 
-        //public async Task<GameDto> GetAsync(Guid id)
-        //{
-        //    var game = await _unitOfWork.GameRepository.GetAsync(id);
-
-        //    var dtos = _mapper.Map<GameDto>(game);
-
-        //    return dtos;
-        //}
+        public async Task<GymClass> GetByIdAsync(int? id)
+        {
+            var gymClass = await _gymClassRepository.GetByIdAsync(id);
+            return gymClass;
+        }
 
 
         //public async Task<GameDto> UpdateAsync(Guid id, GameForUpdateDto dto)

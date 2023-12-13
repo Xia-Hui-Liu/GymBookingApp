@@ -21,5 +21,16 @@ namespace GymBookingApp.Repositories
                  .ToListAsync();
             return gymClasses;
         }
+
+        public async Task<GymClass> GetByIdAsync(int? id)
+        {
+            var gymClassWithAttendees = await _context.GymClasses
+                .Include(c => c.ApplicationUsers)
+                    .ThenInclude(u => u.ApplicationUser)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            return gymClassWithAttendees;
+        }
+
     }
 }

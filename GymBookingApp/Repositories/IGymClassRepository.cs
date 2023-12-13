@@ -6,5 +6,6 @@ namespace GymBookingApp.Repositories
     public interface IGymClassRepository
     {
         Task<IEnumerable<GymClass>> GetAllAsync();
+        Task<GymClass> GetByIdAsync(int? id);
     }
 }

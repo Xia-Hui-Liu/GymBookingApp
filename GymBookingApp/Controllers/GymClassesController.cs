@@ -45,10 +45,7 @@ namespace GymBookingApp.Controllers
         {
             if (id == null) return RedirectToAction(nameof(Index));
 
-            var gymClassWithAttendees = await _context.GymClasses
-                .Where(g => g.Id == id)
-                .Include(c => c.ApplicationUsers)
-                .ThenInclude(u => u.ApplicationUser).FirstOrDefaultAsync();
+            var gymClassWithAttendees = await _service.GetByIdAsync(id);
 
             if (gymClassWithAttendees == null)
                 return RedirectToAction(nameof(Index));

@@ -23,8 +23,8 @@ namespace GymBookingApp.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly IMapper _mapper;
-        private readonly GymClassService _service;
-        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper, GymClassService service) // inject UserManager<ApplicationUser> into GymClassesController
+        private readonly IGymClassService _service;
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IMapper mapper, IGymClassService service) // inject UserManager<ApplicationUser> into GymClassesController
         {
             _context = context;
             _userManager = userManager;
@@ -36,13 +36,6 @@ namespace GymBookingApp.Controllers
         // GET: GymClasses
         public async Task<IActionResult> Index()
         {
-            //var gymClasses = await _context.GymClasses
-            //     .Include(g => g.ApplicationUsers)
-            //     .Where(g => g.StartTime > DateTime.UtcNow)
-            //     .ToListAsync();
-
-            // var model = _mapper.Map<IndexViewModel>(gymClasses);
-            // return View(model);
             return View(await _service.GetAllAsync());
         }
 

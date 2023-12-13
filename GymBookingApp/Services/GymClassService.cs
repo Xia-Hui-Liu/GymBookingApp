@@ -8,20 +8,26 @@ namespace GymBookingApp.Services
     public class GymClassService : IGymClassService
     {
 
-        private readonly GymClassRepository _gymClassRepository;
+        private readonly IGymClassRepository _gymClassRepository;
         private readonly IMapper _mapper;
 
-        public GymClassService(GymClassRepository gymClassRepository, IMapper mapper)
+        public GymClassService(IGymClassRepository gymClassRepository, IMapper mapper)
         {
-            _gymClassRepository = _gymClassRepository;
+            _gymClassRepository = gymClassRepository;
             _mapper = mapper;
 
         }
 
-        public async Task<IEnumerable<IndexViewModel>> GetAllAsync()
+        public async Task<IndexViewModel> GetAllAsync()
         {
             var gymClasses = await _gymClassRepository.GetAllAsync();
-            var dtos = _mapper.Map<IEnumerable<IndexViewModel>>(gymClasses);
+
+            // Map the list of GymClass entities directly to GymClassesViewModel
+            var dtos = _mapper.Map<IndexViewModel>(gymClasses);
+
+            // Wrap each GymClassesViewModel in an IndexViewModel
+            //var indexViewModels = dtos.Select(dto => new IndexViewModel { GymClasses = new List<GymClassesViewModel> { dto } });
+
             return dtos;
         }
 

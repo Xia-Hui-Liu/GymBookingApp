@@ -1,6 +1,8 @@
 using GymBookingApp.Data;
 using GymBookingApp.Extensions;
 using GymBookingApp.Models;
+using GymBookingApp.Repositories;
+using GymBookingApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,12 @@ builder.Services.AddDefaultIdentity<ApplicationUser>()
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddAutoMapper(typeof(MapperProfile));
+
+// Register the GymClassRepository service with a scoped lifetime.
+builder.Services.AddScoped<IGymClassRepository, GymClassRepository>();
+
+// Register the GymClassService service with a scoped lifetime.
+builder.Services.AddScoped<IGymClassService, GymClassService>();
 
 var app = builder.Build();
 

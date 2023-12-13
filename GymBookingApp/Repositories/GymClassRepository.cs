@@ -13,7 +13,7 @@ namespace GymBookingApp.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<GymClass>> GetAllAsync(int id)
+        public async Task<IEnumerable<GymClass>> GetAllAsync()
         {
             var gymClasses = await _context.GymClasses
                  .Include(g => g.ApplicationUsers)

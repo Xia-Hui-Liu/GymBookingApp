@@ -1,11 +1,12 @@
 ﻿using GymBookingApp.Models;
-using GymBookingApp.Models.ViewModels;
-
-namespace GymBookingApp.Repositories
+namespace GymBookingApp.Repositories;
+public interface IGymClassRepository
 {
-    public interface IGymClassRepository
-    {
-        Task<IEnumerable<GymClass>> GetAllAsync();
-        Task<GymClass> GetByIdAsync(int? id);
-    }
+    Task<IEnumerable<GymClass>> GetAllAsync();
+    Task<GymClass> GetByIdAsync(int? id);
+
+    void Add(GymClass gymClass);
+    void Update(GymClass gymClass);
+    void Remove(GymClass gymClass);
+    Task CompleteAsyncTask();
 }

@@ -45,13 +45,20 @@ namespace GymBookingApp.Services
         //    return _mapper.Map<GameDto>(game);
         //}
 
-        //public async Task<GameDto?> PostAsync(GameForCreationDto dto)
-        //{
-        //    var game = _mapper.Map<Game>(dto);
-        //    _unitOfWork.GameRepository.Add(game);
-        //    await _unitOfWork.CompleteAsync();
-        //    return _mapper.Map<GameDto>(game);
-        //}
+        public async Task<GymClass?> PostAsync(GymClass gymClass)
+        {
+            try
+            {
+                _gymClassRepository.Add(gymClass);
+                await _gymClassRepository.CompleteAsyncTask().ConfigureAwait(false);
+                return gymClass; // Returning the added GymClass directly
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
 
         //public async Task<GameDto> DeleteAsync(Guid id)
         //{
@@ -60,6 +67,7 @@ namespace GymBookingApp.Services
         //    return _mapper.Map<GameDto>(existGame);
 
         //}
+
 
     }
 }
